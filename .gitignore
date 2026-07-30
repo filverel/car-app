@@ -38,8 +38,14 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
-README.md
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase runtime files
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
