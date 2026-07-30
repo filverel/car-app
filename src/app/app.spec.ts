@@ -19,6 +19,6 @@ describe('App', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, car-app');
+    expect(compiled.querySelector('h1')?.textContent).toContain("John's Car App");
   });
 });
