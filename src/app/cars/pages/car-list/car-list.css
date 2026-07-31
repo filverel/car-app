@@ -1,0 +1,107 @@
+:host {
+  display: block;
+}
+
+.car-list {
+  width: min(100% - 2rem, 75rem);
+  margin-inline: auto;
+  padding-block: 2rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: #a63b00;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0;
+  color: #1d2939;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+}
+
+.page-description {
+  max-width: 38rem;
+  margin: 0.75rem 0 0;
+  color: #475467;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.result-count {
+  margin-block: 0 1rem;
+  color: #344054;
+  font-weight: 600;
+}
+
+.message-card {
+  padding: 1.5rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.message-card h3,
+.message-card p {
+  margin: 0;
+}
+
+.message-card p {
+  margin-top: 0.5rem;
+  color: #475467;
+}
+
+.error-card {
+  border-color: #fda29b;
+  background: #fff5f4;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+table {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: collapse;
+}
+
+caption {
+  padding: 1rem;
+  color: #344054;
+  font-weight: 600;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 0.875rem 1rem;
+  border-top: 1px solid #eaecf0;
+  text-align: left;
+}
+
+thead th {
+  color: #475467;
+  background: #f9fafb;
+  font-size: 0.875rem;
+}
+
+tbody th {
+  color: #1d2939;
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background: #fffaf5;
+}

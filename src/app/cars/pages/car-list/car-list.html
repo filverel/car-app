@@ -1,0 +1,66 @@
+<section class="car-list" aria-labelledby="car-list-heading">
+  <header class="page-header">
+    <p class="eyebrow">Your collection</p>
+    <h2 id="car-list-heading">Cars</h2>
+    <p class="page-description">Browse and compare the cars saved in your database.</p>
+  </header>
+
+  @if (store.isLoading()) {
+    <div class="message-card" role="status" aria-live="polite">
+      <h3>Loading cars</h3>
+      <p>Please wait while we retrieve your collection.</p>
+    </div>
+  } @else if (store.loadError(); as error) {
+    <div class="message-card error-card" role="alert">
+      <h3>Cars unavailable</h3>
+      <p>{{ error }}</p>
+    </div>
+  } @else {
+    <p class="result-count" data-testid="result-count" aria-live="polite">
+      {{ resultCount() }}
+    </p>
+
+    @if (store.cars().length === 0) {
+      <div class="message-card" data-testid="empty-state">
+        <h3>No cars found</h3>
+        <p>Your saved cars will appear here.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <caption>
+            Cars currently stored in the database
+          </caption>
+
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Year</th>
+              <th scope="col">Origin</th>
+              <th scope="col">MPG</th>
+              <th scope="col">Cylinders</th>
+              <th scope="col">Horsepower</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (car of store.cars(); track car.id) {
+              <tr>
+                <th scope="row">{{ car.name }}</th>
+                <td>{{ car.modelYear }}</td>
+                <td>{{ originLabel(car.origin) }}</td>
+                <td>
+                  {{ car.mpg === null ? 'Not available' : car.mpg }}
+                </td>
+                <td>{{ car.cylinders }}</td>
+                <td>
+                  {{ car.horsepower === null ? 'Not available' : car.horsepower }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>
