@@ -49,3 +49,8 @@ firebase-debug.log
 firebase-debug.*.log
 firestore-debug.log
 ui-debug.log
+
+
+# Local administrator credentials
+/secrets/
+*.service-account.json
