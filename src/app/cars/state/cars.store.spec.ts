@@ -23,6 +23,15 @@ describe('CarsStore', () => {
     updatedAt: null,
   };
 
+  const japaneseCar: Car = {
+    ...car,
+    id: 'car-2',
+    name: 'toyota corolla',
+    mpg: 32,
+    modelYear: 1980,
+    origin: 'japan',
+  };
+
   beforeEach(() => {
     carsSource = new Subject<readonly Car[]>();
 
@@ -65,5 +74,34 @@ describe('CarsStore', () => {
     expect(store.cars()).toEqual([]);
     expect(store.isLoading()).toBe(false);
     expect(store.loadError()).toBe("We couldn't load the cars. Please try again.");
+  });
+
+  it('exposes cars matching the current search term', () => {
+    const store = TestBed.inject(CarsStore);
+    carsSource.next([car, japaneseCar]);
+
+    store.setSearchTerm('toyota');
+
+    expect(store.visibleCars()).toEqual([japaneseCar]);
+    expect(store.cars()).toEqual([car, japaneseCar]);
+  });
+
+  it('filters visible cars by origin', () => {
+    const store = TestBed.inject(CarsStore);
+    carsSource.next([car, japaneseCar]);
+
+    store.setOrigin('japan');
+
+    expect(store.visibleCars()).toEqual([japaneseCar]);
+  });
+
+  it('sorts visible cars without changing the source collection', () => {
+    const store = TestBed.inject(CarsStore);
+    carsSource.next([car, japaneseCar]);
+
+    store.setSorting('modelYear', 'descending');
+
+    expect(store.visibleCars()).toEqual([japaneseCar, car]);
+    expect(store.cars()).toEqual([car, japaneseCar]);
   });
 });
