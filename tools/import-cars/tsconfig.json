@@ -10,6 +10,7 @@
     "./**/*.ts",
     "../../src/app/cars/models/car.model.ts",
     "../../src/app/cars/models/automobile-source-row.model.ts",
-    "../../src/app/cars/models/automobile-source-row.normalizer.ts"
+    "../../src/app/cars/models/automobile-source-row.normalizer.ts",
+    "../../src/app/firebase.config.ts"
   ]
 }
