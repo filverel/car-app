@@ -18,3 +18,10 @@ export interface CarQuery {
   readonly sortBy: CarSortField;
   readonly sortDirection: SortDirection;
 }
+
+export const DEFAULT_CAR_QUERY: CarQuery = {
+  searchTerm: '',
+  origin: 'all',
+  sortBy: 'name',
+  sortDirection: 'ascending',
+};
