@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import type { ComponentFixture } from '@angular/core/testing';
 
 import type { Car } from '../../models/car.model';
+import type { CarOriginFilter, CarQuery } from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
 import { CarList } from './car-list';
 
@@ -13,6 +14,9 @@ describe('CarList', () => {
   let visibleCars: WritableSignal<readonly Car[]>;
   let isLoading: WritableSignal<boolean>;
   let loadError: WritableSignal<string | null>;
+  let query: WritableSignal<CarQuery>;
+  let receivedSearchTerm: string | null;
+  let receivedOrigin: CarOriginFilter | null;
 
   const car: Car = {
     id: 'car-1',
@@ -35,6 +39,16 @@ describe('CarList', () => {
     isLoading = signal(true);
     loadError = signal<string | null>(null);
 
+    query = signal<CarQuery>({
+      searchTerm: '',
+      origin: 'all',
+      sortBy: 'name',
+      sortDirection: 'ascending',
+    });
+
+    receivedSearchTerm = null;
+    receivedOrigin = null;
+
     await TestBed.configureTestingModule({
       imports: [CarList],
       providers: [
@@ -45,6 +59,13 @@ describe('CarList', () => {
             visibleCars,
             isLoading,
             loadError,
+            query,
+            setSearchTerm: (searchTerm: string) => {
+              receivedSearchTerm = searchTerm;
+            },
+            setOrigin: (origin: CarOriginFilter) => {
+              receivedOrigin = origin;
+            },
           },
         },
       ],
@@ -110,5 +131,29 @@ describe('CarList', () => {
     expect(resultCount?.textContent).toContain('1 car');
     expect(table?.textContent).toContain('chevrolet chevelle malibu');
     expect(table?.textContent).toContain('1970');
+  });
+
+  it('sends search input to the store', () => {
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector('#car-search') as HTMLInputElement;
+
+    input.value = 'toyota';
+    input.dispatchEvent(new Event('input'));
+
+    expect(receivedSearchTerm).toBe('toyota');
+  });
+
+  it('sends the selected origin to the store', () => {
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const select = fixture.nativeElement.querySelector('#car-origin') as HTMLSelectElement;
+
+    select.value = 'japan';
+    select.dispatchEvent(new Event('change'));
+
+    expect(receivedOrigin).toBe('japan');
   });
 });

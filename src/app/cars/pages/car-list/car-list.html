@@ -2,7 +2,9 @@
   <header class="page-header">
     <p class="eyebrow">Your collection</p>
     <h2 id="car-list-heading">Cars</h2>
-    <p class="page-description">Browse and compare the cars saved in your database.</p>
+    <p class="page-description">
+      Browse and compare the cars saved in your database.
+    </p>
   </header>
 
   @if (store.isLoading()) {
@@ -16,7 +18,42 @@
       <p>{{ error }}</p>
     </div>
   } @else {
-    <p class="result-count" data-testid="result-count" aria-live="polite">
+    <form class="filter-panel" aria-label="Car filters">
+      <div class="filter-field search-field">
+        <label for="car-search">Search by name</label>
+        <input
+          #searchInput
+          id="car-search"
+          type="search"
+          placeholder="For example, Toyota"
+          autocomplete="off"
+          [value]="store.query().searchTerm"
+          (input)="onSearchTermChange(searchInput.value)"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label for="car-origin">Origin</label>
+        <select
+          #originSelect
+          id="car-origin"
+          [value]="store.query().origin"
+          (change)="onOriginChange(originSelect.value)"
+        >
+          <option value="all">All origins</option>
+          <option value="usa">USA</option>
+          <option value="europe">Europe</option>
+          <option value="japan">Japan</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </form>
+
+    <p
+      class="result-count"
+      data-testid="result-count"
+      aria-live="polite"
+    >
       {{ resultCount() }}
     </p>
 
@@ -26,7 +63,10 @@
         <p>Your saved cars will appear here.</p>
       </div>
     } @else if (store.visibleCars().length === 0) {
-      <div class="message-card" data-testid="query-empty-state">
+      <div
+        class="message-card"
+        data-testid="query-empty-state"
+      >
         <h3>No matching cars</h3>
         <p>Try changing your search or filters.</p>
       </div>
@@ -34,7 +74,7 @@
       <div class="table-wrapper">
         <table>
           <caption>
-            Cars currently stored in the database
+            Cars currently matching your search and filters
           </caption>
 
           <thead>
@@ -55,11 +95,19 @@
                 <td>{{ car.modelYear }}</td>
                 <td>{{ originLabel(car.origin) }}</td>
                 <td>
-                  {{ car.mpg === null ? 'Not available' : car.mpg }}
+                  {{
+                    car.mpg === null
+                      ? 'Not available'
+                      : car.mpg
+                  }}
                 </td>
                 <td>{{ car.cylinders }}</td>
                 <td>
-                  {{ car.horsepower === null ? 'Not available' : car.horsepower }}
+                  {{
+                    car.horsepower === null
+                      ? 'Not available'
+                      : car.horsepower
+                  }}
                 </td>
               </tr>
             }

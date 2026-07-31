@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import type { CarOrigin } from '../../models/car.model';
+import type { CarOriginFilter } from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
 
 @Component({
@@ -17,6 +18,16 @@ export class CarList {
     return `${count} ${count === 1 ? 'car' : 'cars'}`;
   });
 
+  protected onSearchTermChange(searchTerm: string): void {
+    this.store.setSearchTerm(searchTerm);
+  }
+
+  protected onOriginChange(origin: string): void {
+    if (this.isCarOriginFilter(origin)) {
+      this.store.setOrigin(origin);
+    }
+  }
+
   protected originLabel(origin: CarOrigin): string {
     switch (origin) {
       case 'usa':
@@ -28,5 +39,15 @@ export class CarList {
       case 'other':
         return 'Other';
     }
+  }
+
+  private isCarOriginFilter(value: string): value is CarOriginFilter {
+    return (
+      value === 'all' ||
+      value === 'usa' ||
+      value === 'europe' ||
+      value === 'japan' ||
+      value === 'other'
+    );
   }
 }
