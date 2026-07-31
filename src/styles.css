@@ -1,6 +1,24 @@
 :root {
-  color: #1d2939;
-  background: #f2f4f7;
+  --color-background: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f5f9;
+
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+
+  --color-border: #dbe3ee;
+
+  --color-brand: #0f766e;
+  --color-brand-strong: #115e59;
+  --color-brand-soft: #f0fdfa;
+  --color-brand-highlight: #5eead4;
+
+  --color-danger: #b42318;
+  --color-danger-background: #fef3f2;
+  --color-danger-border: #fecdca;
+
+  color: var(--color-text);
+  background: var(--color-background);
   font-family:
     Inter,
     ui-sans-serif,
@@ -34,4 +52,14 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: var(--color-text);
+  background: #ccfbf1;
 }

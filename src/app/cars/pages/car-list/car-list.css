@@ -14,11 +14,16 @@
 
 .eyebrow {
   margin: 0 0 0.5rem;
-  color: #a63b00;
+  color: var(--color-brand);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+h2,
+tbody th {
+  color: var(--color-text);
 }
 
 h2 {
@@ -26,6 +31,14 @@ h2 {
   color: #1d2939;
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1.1;
+}
+
+.page-description,
+.result-count,
+.message-card p,
+caption,
+thead th {
+  color: var(--color-text-muted);
 }
 
 .page-description {
@@ -44,9 +57,10 @@ h2 {
 
 .message-card {
   padding: 1.5rem;
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
-  background: #ffffff;
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
 }
 
 .message-card h3,
@@ -60,15 +74,22 @@ h2 {
 }
 
 .error-card {
-  border-color: #fda29b;
-  background: #fff5f4;
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-background);
+}
+
+.error-card h3 {
+  color: var(--color-danger);
 }
 
 .table-wrapper {
   overflow-x: auto;
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
-  background: #ffffff;
+  background: var(--color-surface);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 4%),
+    0 8px 24px rgb(15 23 42 / 5%);
 }
 
 table {
@@ -87,13 +108,13 @@ caption {
 th,
 td {
   padding: 0.875rem 1rem;
-  border-top: 1px solid #eaecf0;
+  border-top: 1px solid var(--color-border);
   text-align: left;
 }
 
 thead th {
-  color: #475467;
-  background: #f9fafb;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
   font-size: 0.875rem;
 }
 
@@ -102,6 +123,10 @@ tbody th {
   font-weight: 600;
 }
 
+tbody tr {
+  transition: background-color 150ms ease;
+}
+
 tbody tr:hover {
-  background: #fffaf5;
+  background: var(--color-brand-soft);
 }
