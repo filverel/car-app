@@ -3,10 +3,14 @@ import { Subject } from 'rxjs';
 
 import { CarsRepository } from '../data-access/cars.repository';
 import type { Car } from '../models/car.model';
+import type { CarQuery } from '../models/car-query.model';
+import { CarQueryStorage } from './car-query.storage';
 import { CarsStore } from './cars.store';
 
 describe('CarsStore', () => {
   let carsSource: Subject<readonly Car[]>;
+  let storedQuery: CarQuery;
+  let savedQuery: CarQuery | null;
 
   const car: Car = {
     id: 'car-1',
@@ -34,6 +38,13 @@ describe('CarsStore', () => {
 
   beforeEach(() => {
     carsSource = new Subject<readonly Car[]>();
+    storedQuery = {
+      searchTerm: '',
+      origin: 'all',
+      sortBy: 'name',
+      sortDirection: 'ascending',
+    };
+    savedQuery = null;
 
     TestBed.configureTestingModule({
       providers: [
@@ -42,6 +53,15 @@ describe('CarsStore', () => {
           provide: CarsRepository,
           useValue: {
             watchAll: () => carsSource.asObservable(),
+          },
+        },
+        {
+          provide: CarQueryStorage,
+          useValue: {
+            load: () => storedQuery,
+            save: (query: CarQuery) => {
+              savedQuery = query;
+            },
           },
         },
       ],
@@ -103,5 +123,31 @@ describe('CarsStore', () => {
 
     expect(store.visibleCars()).toEqual([japaneseCar, car]);
     expect(store.cars()).toEqual([car, japaneseCar]);
+  });
+
+  it('restores the stored query when created', () => {
+    storedQuery = {
+      searchTerm: 'toyota',
+      origin: 'japan',
+      sortBy: 'modelYear',
+      sortDirection: 'descending',
+    };
+
+    const store = TestBed.inject(CarsStore);
+
+    expect(store.query()).toEqual(storedQuery);
+  });
+
+  it('persists query changes', () => {
+    const store = TestBed.inject(CarsStore);
+
+    store.setOrigin('europe');
+
+    expect(savedQuery).toEqual({
+      searchTerm: '',
+      origin: 'europe',
+      sortBy: 'name',
+      sortDirection: 'ascending',
+    });
   });
 });

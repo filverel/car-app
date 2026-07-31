@@ -10,6 +10,7 @@ import type {
   CarSortField,
   SortDirection,
 } from '../models/car-query.model';
+import { CarQueryStorage } from './car-query.storage';
 
 @Injectable({
   providedIn: 'root',
@@ -17,17 +18,15 @@ import type {
 export class CarsStore {
   private readonly repository = inject(CarsRepository);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryStorage = inject(CarQueryStorage);
 
   private readonly carsState = signal<readonly Car[]>([]);
   private readonly isLoadingState = signal(true);
   private readonly loadErrorState = signal<string | null>(null);
 
-  private readonly queryState = signal<CarQuery>({
-    searchTerm: '',
-    origin: 'all',
-    sortBy: 'name',
-    sortDirection: 'ascending',
-  });
+  private readonly queryState = signal<CarQuery>(
+    this.queryStorage.load(),
+  );
 
   readonly cars = this.carsState.asReadonly();
   readonly isLoading = this.isLoadingState.asReadonly();
@@ -49,10 +48,13 @@ export class CarsStore {
   }
 
   private updateQuery(changes: Partial<CarQuery>): void {
-    this.queryState.update((query) => ({
-      ...query,
+    const nextQuery: CarQuery = {
+      ...this.queryState(),
       ...changes,
-    }));
+    };
+
+    this.queryState.set(nextQuery);
+    this.queryStorage.save(nextQuery);
   }
 
   constructor() {
