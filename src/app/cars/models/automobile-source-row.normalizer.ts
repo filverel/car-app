@@ -18,25 +18,25 @@ export function normalizeAutomobileSourceRow(
 ): AutomobileSourceRowNormalizationResult {
   const errors: string[] = [];
 
-  const name = toTrimmedString(row.Name);
+  const name = toTrimmedString(row.name);
 
   if (!name) {
     errors.push('Name is required');
   }
 
-  const mpg = parseOptionalNumber(row.MPG, 'MPG', errors);
-  const cylinders = parseRequiredNumber(row.Cylinders, 'Cylinders', errors);
-  const displacement = parseOptionalNumber(row.Displacement, 'Displacement', errors);
-  const horsepower = parseOptionalNumber(row.Horsepower, 'Horsepower', errors);
-  const weight = parseOptionalNumber(row.Weight, 'Weight', errors);
-  const acceleration = parseOptionalNumber(row.Acceleration, 'Acceleration', errors);
+  const mpg = parseOptionalNumber(row.mpg, 'MPG', errors);
+  const cylinders = parseRequiredNumber(row.cylinders, 'Cylinders', errors);
+  const displacement = parseOptionalNumber(row.displacement, 'Displacement', errors);
+  const horsepower = parseOptionalNumber(row.horsepower, 'Horsepower', errors);
+  const weight = parseOptionalNumber(row.weight, 'Weight', errors);
+  const acceleration = parseOptionalNumber(row.acceleration, 'Acceleration', errors);
 
-  const sourceModelYear = parseRequiredNumber(row['Model Year'], 'Model Year', errors);
+  const sourceModelYear = parseRequiredNumber(row.model_year, 'Model Year', errors);
 
   const modelYear =
     sourceModelYear !== null && sourceModelYear <= 99 ? sourceModelYear + 1900 : sourceModelYear;
 
-  const origin = normalizeOrigin(row.Origin);
+  const origin = normalizeOrigin(row.origin);
 
   if (errors.length > 0 || cylinders === null || modelYear === null) {
     return {

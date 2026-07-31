@@ -1,11 +1,11 @@
 export interface AutomobileSourceRow {
-  readonly Name: unknown;
-  readonly MPG: unknown;
-  readonly Cylinders: unknown;
-  readonly Displacement: unknown;
-  readonly Horsepower: unknown;
-  readonly Weight: unknown;
-  readonly Acceleration: unknown;
-  readonly 'Model Year': unknown;
-  readonly Origin: unknown;
+  readonly name: unknown;
+  readonly mpg: unknown;
+  readonly cylinders: unknown;
+  readonly displacement: unknown;
+  readonly horsepower: unknown;
+  readonly weight: unknown;
+  readonly acceleration: unknown;
+  readonly model_year: unknown;
+  readonly origin: unknown;
 }

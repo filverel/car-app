@@ -3,15 +3,15 @@ import { normalizeAutomobileSourceRow } from './automobile-source-row.normalizer
 
 describe('normalizeAutomobileSourceRow', () => {
   const validRow: AutomobileSourceRow = {
-    Name: ' chevrolet chevelle malibu ',
-    MPG: '18',
-    Cylinders: '8',
-    Displacement: '307',
-    Horsepower: '130',
-    Weight: '3504',
-    Acceleration: '12',
-    'Model Year': '70',
-    Origin: '1',
+    name: ' chevrolet chevelle malibu ',
+    mpg: '18',
+    cylinders: '8',
+    displacement: '307',
+    horsepower: '130',
+    weight: '3504',
+    acceleration: '12',
+    model_year: '70',
+    origin: 'usa',
   };
 
   it('normalizes a valid source row', () => {
@@ -36,7 +36,7 @@ describe('normalizeAutomobileSourceRow', () => {
   it('represents missing horsepower as null', () => {
     const result = normalizeAutomobileSourceRow({
       ...validRow,
-      Horsepower: '?',
+      horsepower: '?',
     });
 
     expect(result.ok).toBe(true);
@@ -49,17 +49,17 @@ describe('normalizeAutomobileSourceRow', () => {
   });
 
   it.each([
-    ['1', 'usa'],
+    ['usa', 'usa'],
     ['USA', 'usa'],
-    ['2', 'europe'],
+    ['europe', 'europe'],
     ['Europe', 'europe'],
-    ['3', 'japan'],
+    ['japan', 'japan'],
     ['Japan', 'japan'],
     ['unexpected', 'other'],
   ])('maps origin %s to %s', (sourceOrigin, expectedOrigin) => {
     const result = normalizeAutomobileSourceRow({
       ...validRow,
-      Origin: sourceOrigin,
+      origin: sourceOrigin,
     });
 
     expect(result.ok).toBe(true);
@@ -74,7 +74,7 @@ describe('normalizeAutomobileSourceRow', () => {
   it('rejects malformed optional numeric values', () => {
     const result = normalizeAutomobileSourceRow({
       ...validRow,
-      Horsepower: 'strong',
+      horsepower: 'strong',
     });
 
     expect(result.ok).toBe(false);
@@ -89,9 +89,9 @@ describe('normalizeAutomobileSourceRow', () => {
   it('returns all errors for invalid required values', () => {
     const result = normalizeAutomobileSourceRow({
       ...validRow,
-      Name: '   ',
-      Cylinders: 'many',
-      'Model Year': 'unknown',
+      name: '   ',
+      cylinders: 'many',
+      model_year: 'unknown',
     });
 
     expect(result.ok).toBe(false);
