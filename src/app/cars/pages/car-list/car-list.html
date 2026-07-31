@@ -47,6 +47,34 @@
           <option value="other">Other</option>
         </select>
       </div>
+
+      <div class="filter-field">
+        <label for="car-sort-field">Sort by</label>
+        <select
+          #sortFieldSelect
+          id="car-sort-field"
+          [value]="store.query().sortBy"
+          (change)="onSortFieldChange(sortFieldSelect.value)"
+        >
+          <option value="name">Name</option>
+          <option value="modelYear">Year</option>
+          <option value="mpg">MPG</option>
+          <option value="horsepower">Horsepower</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="car-sort-direction">Direction</label>
+        <select
+          #sortDirectionSelect
+          id="car-sort-direction"
+          [value]="store.query().sortDirection"
+          (change)="onSortDirectionChange(sortDirectionSelect.value)"
+        >
+          <option value="ascending">Ascending</option>
+          <option value="descending">Descending</option>
+        </select>
+      </div>
     </form>
 
     <p

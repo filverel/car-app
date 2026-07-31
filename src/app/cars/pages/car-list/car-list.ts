@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import type { CarOrigin } from '../../models/car.model';
-import type { CarOriginFilter } from '../../models/car-query.model';
+import type {
+  CarOriginFilter,
+  CarSortField,
+  SortDirection,
+} from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
 
 @Component({
@@ -28,6 +32,24 @@ export class CarList {
     }
   }
 
+  protected onSortFieldChange(sortBy: string): void {
+    if (this.isCarSortField(sortBy)) {
+      this.store.setSorting(
+        sortBy,
+        this.store.query().sortDirection,
+      );
+    }
+  }
+
+  protected onSortDirectionChange(sortDirection: string): void {
+    if (this.isSortDirection(sortDirection)) {
+      this.store.setSorting(
+        this.store.query().sortBy,
+        sortDirection,
+      );
+    }
+  }
+
   protected originLabel(origin: CarOrigin): string {
     switch (origin) {
       case 'usa':
@@ -49,5 +71,18 @@ export class CarList {
       value === 'japan' ||
       value === 'other'
     );
+  }
+
+  private isCarSortField(value: string): value is CarSortField {
+    return (
+      value === 'name' ||
+      value === 'modelYear' ||
+      value === 'mpg' ||
+      value === 'horsepower'
+    );
+  }
+
+  private isSortDirection(value: string): value is SortDirection {
+    return value === 'ascending' || value === 'descending';
   }
 }

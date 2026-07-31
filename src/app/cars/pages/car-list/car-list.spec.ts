@@ -4,7 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import type { ComponentFixture } from '@angular/core/testing';
 
 import type { Car } from '../../models/car.model';
-import type { CarOriginFilter, CarQuery } from '../../models/car-query.model';
+import type {
+  CarOriginFilter,
+  CarQuery,
+  CarSortField,
+  SortDirection,
+} from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
 import { CarList } from './car-list';
 
@@ -17,6 +22,10 @@ describe('CarList', () => {
   let query: WritableSignal<CarQuery>;
   let receivedSearchTerm: string | null;
   let receivedOrigin: CarOriginFilter | null;
+  let receivedSorting: {
+    sortBy: CarSortField;
+    sortDirection: SortDirection;
+  } | null;
 
   const car: Car = {
     id: 'car-1',
@@ -48,6 +57,7 @@ describe('CarList', () => {
 
     receivedSearchTerm = null;
     receivedOrigin = null;
+    receivedSorting = null;
 
     await TestBed.configureTestingModule({
       imports: [CarList],
@@ -65,6 +75,12 @@ describe('CarList', () => {
             },
             setOrigin: (origin: CarOriginFilter) => {
               receivedOrigin = origin;
+            },
+            setSorting: (
+              sortBy: CarSortField,
+              sortDirection: SortDirection,
+            ) => {
+              receivedSorting = { sortBy, sortDirection };
             },
           },
         },
@@ -155,5 +171,39 @@ describe('CarList', () => {
     select.dispatchEvent(new Event('change'));
 
     expect(receivedOrigin).toBe('japan');
+  });
+
+  it('sends the selected sort field to the store', () => {
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const select = fixture.nativeElement.querySelector(
+      '#car-sort-field',
+    ) as HTMLSelectElement;
+
+    select.value = 'modelYear';
+    select.dispatchEvent(new Event('change'));
+
+    expect(receivedSorting).toEqual({
+      sortBy: 'modelYear',
+      sortDirection: 'ascending',
+    });
+  });
+
+  it('sends the selected sort direction to the store', () => {
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const select = fixture.nativeElement.querySelector(
+      '#car-sort-direction',
+    ) as HTMLSelectElement;
+
+    select.value = 'descending';
+    select.dispatchEvent(new Event('change'));
+
+    expect(receivedSorting).toEqual({
+      sortBy: 'name',
+      sortDirection: 'descending',
+    });
   });
 });
