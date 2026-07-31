@@ -25,6 +25,11 @@
         <h3>No cars found</h3>
         <p>Your saved cars will appear here.</p>
       </div>
+    } @else if (store.visibleCars().length === 0) {
+      <div class="message-card" data-testid="query-empty-state">
+        <h3>No matching cars</h3>
+        <p>Try changing your search or filters.</p>
+      </div>
     } @else {
       <div class="table-wrapper">
         <table>
@@ -44,7 +49,7 @@
           </thead>
 
           <tbody>
-            @for (car of store.cars(); track car.id) {
+            @for (car of store.visibleCars(); track car.id) {
               <tr>
                 <th scope="row">{{ car.name }}</th>
                 <td>{{ car.modelYear }}</td>

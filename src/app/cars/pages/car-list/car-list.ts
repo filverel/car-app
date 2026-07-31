@@ -13,7 +13,7 @@ export class CarList {
   protected readonly store = inject(CarsStore);
 
   protected readonly resultCount = computed(() => {
-    const count = this.store.cars().length;
+    const count = this.store.visibleCars().length;
     return `${count} ${count === 1 ? 'car' : 'cars'}`;
   });
 

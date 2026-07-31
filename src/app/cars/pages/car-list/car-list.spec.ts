@@ -10,6 +10,7 @@ import { CarList } from './car-list';
 describe('CarList', () => {
   let fixture: ComponentFixture<CarList>;
   let cars: WritableSignal<readonly Car[]>;
+  let visibleCars: WritableSignal<readonly Car[]>;
   let isLoading: WritableSignal<boolean>;
   let loadError: WritableSignal<string | null>;
 
@@ -30,6 +31,7 @@ describe('CarList', () => {
 
   beforeEach(async () => {
     cars = signal<readonly Car[]>([]);
+    visibleCars = signal<readonly Car[]>([]);
     isLoading = signal(true);
     loadError = signal<string | null>(null);
 
@@ -40,6 +42,7 @@ describe('CarList', () => {
           provide: CarsStore,
           useValue: {
             cars,
+            visibleCars,
             isLoading,
             loadError,
           },
@@ -79,8 +82,22 @@ describe('CarList', () => {
     expect(emptyState?.textContent).toContain('No cars found');
   });
 
+  it('shows a query empty state when stored cars do not match', () => {
+    cars.set([car]);
+    visibleCars.set([]);
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector(
+      '[data-testid="query-empty-state"]',
+    ) as HTMLElement | null;
+
+    expect(emptyState?.textContent).toContain('No matching cars');
+  });
+
   it('shows the result count and loaded car', () => {
     cars.set([car]);
+    visibleCars.set([car]);
     isLoading.set(false);
     fixture.detectChanges();
 
