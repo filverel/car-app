@@ -24,8 +24,14 @@ export function applyCarQuery(cars: readonly Car[], query: CarQuery): readonly C
       case 'modelYear':
         return (left.modelYear - right.modelYear) * direction;
 
+      case 'origin':
+        return left.origin.localeCompare(right.origin) * direction;
+
       case 'mpg':
         return compareNullableNumbers(left.mpg, right.mpg, query.sortDirection);
+
+      case 'cylinders':
+        return (left.cylinders - right.cylinders) * direction;
 
       case 'horsepower':
         return compareNullableNumbers(left.horsepower, right.horsepower, query.sortDirection);

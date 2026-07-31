@@ -2,7 +2,13 @@ import type { CarOrigin } from './car.model';
 
 export type CarOriginFilter = CarOrigin | 'all';
 
-export type CarSortField = 'name' | 'modelYear' | 'mpg' | 'horsepower';
+export type CarSortField =
+  | 'name'
+  | 'modelYear'
+  | 'origin'
+  | 'mpg'
+  | 'cylinders'
+  | 'horsepower';
 
 export type SortDirection = 'ascending' | 'descending';
 

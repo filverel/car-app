@@ -37,6 +37,7 @@ describe('applyCarQuery', () => {
       modelYear: 1971,
       origin: 'usa',
       mpg: 25,
+      cylinders: 6,
       horsepower: 75,
     }),
     createCar({
@@ -45,6 +46,7 @@ describe('applyCarQuery', () => {
       modelYear: 1980,
       origin: 'japan',
       mpg: 32,
+      cylinders: 4,
       horsepower: 65,
     }),
     createCar({
@@ -53,6 +55,7 @@ describe('applyCarQuery', () => {
       modelYear: 1976,
       origin: 'europe',
       mpg: null,
+      cylinders: 8,
       horsepower: null,
     }),
   ];
@@ -103,6 +106,25 @@ describe('applyCarQuery', () => {
     });
 
     expect(result.map((car) => car.id)).toEqual(['car-2', 'car-1', 'car-3']);
+  });
+
+  it('sorts by origin', () => {
+    const result = applyCarQuery(cars, {
+      ...defaultQuery,
+      sortBy: 'origin',
+    });
+
+    expect(result.map((car) => car.id)).toEqual(['car-3', 'car-2', 'car-1']);
+  });
+
+  it('sorts by cylinder count', () => {
+    const result = applyCarQuery(cars, {
+      ...defaultQuery,
+      sortBy: 'cylinders',
+      sortDirection: 'descending',
+    });
+
+    expect(result.map((car) => car.id)).toEqual(['car-3', 'car-1', 'car-2']);
   });
 
   it('does not mutate the source collection', () => {

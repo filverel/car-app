@@ -81,6 +81,11 @@ describe('CarList', () => {
               sortDirection: SortDirection,
             ) => {
               receivedSorting = { sortBy, sortDirection };
+              query.update((currentQuery) => ({
+                ...currentQuery,
+                sortBy,
+                sortDirection,
+              }));
             },
           },
         },
@@ -205,5 +210,54 @@ describe('CarList', () => {
       sortBy: 'name',
       sortDirection: 'descending',
     });
+  });
+
+  it('renders a sort button for every displayed column', () => {
+    cars.set([car]);
+    visibleCars.set([car]);
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const sortButtons = fixture.nativeElement.querySelectorAll(
+      '[data-sort-field]',
+    ) as NodeListOf<HTMLButtonElement>;
+
+    expect(Array.from(sortButtons, (button) => button.dataset['sortField'])).toEqual([
+      'name',
+      'modelYear',
+      'origin',
+      'mpg',
+      'cylinders',
+      'horsepower',
+    ]);
+  });
+
+  it('toggles a column between ascending and descending sorting', () => {
+    cars.set([car]);
+    visibleCars.set([car]);
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '[data-sort-field="name"]',
+    ) as HTMLButtonElement;
+
+    button.click();
+    fixture.detectChanges();
+
+    expect(receivedSorting).toEqual({
+      sortBy: 'name',
+      sortDirection: 'descending',
+    });
+    expect(button.closest('th')?.getAttribute('aria-sort')).toBe('descending');
+
+    button.click();
+    fixture.detectChanges();
+
+    expect(receivedSorting).toEqual({
+      sortBy: 'name',
+      sortDirection: 'ascending',
+    });
+    expect(button.closest('th')?.getAttribute('aria-sort')).toBe('ascending');
   });
 });

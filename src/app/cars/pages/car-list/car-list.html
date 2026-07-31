@@ -58,7 +58,9 @@
         >
           <option value="name">Name</option>
           <option value="modelYear">Year</option>
+          <option value="origin">Origin</option>
           <option value="mpg">MPG</option>
+          <option value="cylinders">Cylinders</option>
           <option value="horsepower">Horsepower</option>
         </select>
       </div>
@@ -107,12 +109,84 @@
 
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Year</th>
-              <th scope="col">Origin</th>
-              <th scope="col">MPG</th>
-              <th scope="col">Cylinders</th>
-              <th scope="col">Horsepower</th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('name')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="name"
+                  (click)="onColumnSort('name')"
+                >
+                  Name
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('name') }}
+                  </span>
+                </button>
+              </th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('modelYear')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="modelYear"
+                  (click)="onColumnSort('modelYear')"
+                >
+                  Year
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('modelYear') }}
+                  </span>
+                </button>
+              </th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('origin')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="origin"
+                  (click)="onColumnSort('origin')"
+                >
+                  Origin
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('origin') }}
+                  </span>
+                </button>
+              </th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('mpg')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="mpg"
+                  (click)="onColumnSort('mpg')"
+                >
+                  MPG
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('mpg') }}
+                  </span>
+                </button>
+              </th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('cylinders')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="cylinders"
+                  (click)="onColumnSort('cylinders')"
+                >
+                  Cylinders
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('cylinders') }}
+                  </span>
+                </button>
+              </th>
+              <th scope="col" [attr.aria-sort]="columnAriaSort('horsepower')">
+                <button
+                  type="button"
+                  class="sort-button"
+                  data-sort-field="horsepower"
+                  (click)="onColumnSort('horsepower')"
+                >
+                  Horsepower
+                  <span class="sort-indicator" aria-hidden="true">
+                    {{ sortIndicator('horsepower') }}
+                  </span>
+                </button>
+              </th>
             </tr>
           </thead>
 

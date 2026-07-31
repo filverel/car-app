@@ -50,6 +50,31 @@ export class CarList {
     }
   }
 
+  protected onColumnSort(sortBy: CarSortField): void {
+    const query = this.store.query();
+    const sortDirection: SortDirection =
+      query.sortBy === sortBy && query.sortDirection === 'ascending'
+        ? 'descending'
+        : 'ascending';
+
+    this.store.setSorting(sortBy, sortDirection);
+  }
+
+  protected columnAriaSort(sortBy: CarSortField): SortDirection | null {
+    const query = this.store.query();
+    return query.sortBy === sortBy ? query.sortDirection : null;
+  }
+
+  protected sortIndicator(sortBy: CarSortField): string {
+    const query = this.store.query();
+
+    if (query.sortBy !== sortBy) {
+      return '↕';
+    }
+
+    return query.sortDirection === 'ascending' ? '↑' : '↓';
+  }
+
   protected originLabel(origin: CarOrigin): string {
     switch (origin) {
       case 'usa':
@@ -77,7 +102,9 @@ export class CarList {
     return (
       value === 'name' ||
       value === 'modelYear' ||
+      value === 'origin' ||
       value === 'mpg' ||
+      value === 'cylinders' ||
       value === 'horsepower'
     );
   }
