@@ -3,6 +3,7 @@ import type { WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { ComponentFixture } from '@angular/core/testing';
 
+import { CarCsvDownloadService } from '../../data-access/car-csv-download.service';
 import type { Car } from '../../models/car.model';
 import type {
   CarOriginFilter,
@@ -22,6 +23,7 @@ describe('CarList', () => {
   let query: WritableSignal<CarQuery>;
   let receivedSearchTerm: string | null;
   let receivedOrigin: CarOriginFilter | null;
+  let downloadedCars: readonly Car[] | null;
   let receivedSorting: {
     sortBy: CarSortField;
     sortDirection: SortDirection;
@@ -57,6 +59,7 @@ describe('CarList', () => {
 
     receivedSearchTerm = null;
     receivedOrigin = null;
+    downloadedCars = null;
     receivedSorting = null;
 
     await TestBed.configureTestingModule({
@@ -86,6 +89,14 @@ describe('CarList', () => {
                 sortBy,
                 sortDirection,
               }));
+            },
+          },
+        },
+        {
+          provide: CarCsvDownloadService,
+          useValue: {
+            download: (carsToDownload: readonly Car[]) => {
+              downloadedCars = carsToDownload;
             },
           },
         },
@@ -152,6 +163,21 @@ describe('CarList', () => {
     expect(resultCount?.textContent).toContain('1 car');
     expect(table?.textContent).toContain('chevrolet chevelle malibu');
     expect(table?.textContent).toContain('1970');
+  });
+
+  it('exports every stored car regardless of visible results', () => {
+    cars.set([car]);
+    visibleCars.set([]);
+    isLoading.set(false);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '[data-testid="export-csv"]',
+    ) as HTMLButtonElement;
+
+    button.click();
+
+    expect(downloadedCars).toEqual([car]);
   });
 
   it('sends search input to the store', () => {

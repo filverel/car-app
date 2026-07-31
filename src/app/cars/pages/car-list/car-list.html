@@ -79,13 +79,25 @@
       </div>
     </form>
 
-    <p
-      class="result-count"
-      data-testid="result-count"
-      aria-live="polite"
-    >
-      {{ resultCount() }}
-    </p>
+    <div class="result-toolbar">
+      <p
+        class="result-count"
+        data-testid="result-count"
+        aria-live="polite"
+      >
+        {{ resultCount() }}
+      </p>
+
+      <button
+        type="button"
+        class="export-button"
+        data-testid="export-csv"
+        [disabled]="store.cars().length === 0"
+        (click)="exportCsv()"
+      >
+        Export CSV
+      </button>
+    </div>
 
     @if (store.cars().length === 0) {
       <div class="message-card" data-testid="empty-state">

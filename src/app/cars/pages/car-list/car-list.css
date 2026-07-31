@@ -93,9 +93,47 @@ thead th {
 }
 
 .result-count {
-  margin-block: 0 1rem;
+  margin: 0;
   color: #344054;
   font-weight: 600;
+}
+
+.result-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.result-toolbar .result-count {
+  margin: 0;
+}
+
+.export-button {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--color-brand);
+  border-radius: 0.5rem;
+  color: var(--color-surface);
+  background: var(--color-brand);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.export-button:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.export-button:focus-visible {
+  outline: 3px solid var(--color-brand-soft);
+  outline-offset: 2px;
+}
+
+.export-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .message-card {

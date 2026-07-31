@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
+import { CarCsvDownloadService } from '../../data-access/car-csv-download.service';
 import type { CarOrigin } from '../../models/car.model';
 import type {
   CarOriginFilter,
@@ -16,6 +17,7 @@ import { CarsStore } from '../../state/cars.store';
 })
 export class CarList {
   protected readonly store = inject(CarsStore);
+  private readonly csvDownload = inject(CarCsvDownloadService);
 
   protected readonly resultCount = computed(() => {
     const count = this.store.visibleCars().length;
@@ -24,6 +26,10 @@ export class CarList {
 
   protected onSearchTermChange(searchTerm: string): void {
     this.store.setSearchTerm(searchTerm);
+  }
+
+  protected exportCsv(): void {
+    this.csvDownload.download(this.store.cars());
   }
 
   protected onOriginChange(origin: string): void {
