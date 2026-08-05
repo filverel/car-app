@@ -7,9 +7,12 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:rules": "vitest run --config tools/firestore-rules/vitest.config.ts",
+    "test:rules:emulator": "firebase emulators:exec --project demo-car-app-rules --config firebase.rules-test.json --only firestore \"npm.cmd run test:rules\"",
     "firebase:emulators": "firebase emulators:start --only auth,firestore",
     "import:cars": "tsx tools/import-cars/import-cars.ts",
-    "typecheck:importer": "tsc --project tools/import-cars/tsconfig.json"
+    "typecheck:importer": "tsc --project tools/import-cars/tsconfig.json",
+    "typecheck:rules": "tsc --project tools/firestore-rules/tsconfig.json"
   },
   "private": true,
   "packageManager": "npm@10.9.2",
@@ -30,6 +33,7 @@
     "@angular/build": "^20.3.27",
     "@angular/cli": "^20.3.27",
     "@angular/compiler-cli": "^20.3.27",
+    "@firebase/rules-unit-testing": "^4.0.1",
     "@types/node": "^22.20.1",
     "csv-parse": "^7.0.1",
     "firebase-admin": "^14.2.0",
