@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 
 import { CarsRepository } from '../data-access/cars.repository';
-import type { Car } from '../models/car.model';
+import { DuplicateCarError } from '../data-access/duplicate-car.error';
+import type { Car, CarData } from '../models/car.model';
 import type { CarQuery } from '../models/car-query.model';
 import { CarQueryStorage } from './car-query.storage';
 import { CarsStore } from './cars.store';
@@ -11,6 +12,7 @@ describe('CarsStore', () => {
   let carsSource: Subject<readonly Car[]>;
   let storedQuery: CarQuery;
   let savedQuery: CarQuery | null;
+  let createCar: ReturnType<typeof vi.fn>;
 
   const car: Car = {
     id: 'car-1',
@@ -36,6 +38,18 @@ describe('CarsStore', () => {
     origin: 'japan',
   };
 
+  const newCar: CarData = {
+    name: 'volvo 244 dl',
+    mpg: 22,
+    cylinders: 4,
+    displacement: 121,
+    horsepower: 98,
+    weight: 2945,
+    acceleration: 14.5,
+    modelYear: 1975,
+    origin: 'europe',
+  };
+
   beforeEach(() => {
     carsSource = new Subject<readonly Car[]>();
     storedQuery = {
@@ -45,6 +59,7 @@ describe('CarsStore', () => {
       sortDirection: 'ascending',
     };
     savedQuery = null;
+    createCar = vi.fn().mockResolvedValue(undefined);
 
     TestBed.configureTestingModule({
       providers: [
@@ -53,6 +68,7 @@ describe('CarsStore', () => {
           provide: CarsRepository,
           useValue: {
             watchAll: () => carsSource.asObservable(),
+            create: createCar,
           },
         },
         {
@@ -74,6 +90,13 @@ describe('CarsStore', () => {
     expect(store.cars()).toEqual([]);
     expect(store.isLoading()).toBe(true);
     expect(store.loadError()).toBeNull();
+  });
+
+  it('starts with an idle car creation state', () => {
+    const store = TestBed.inject(CarsStore);
+
+    expect(store.isCreating()).toBe(false);
+    expect(store.createError()).toBeNull();
   });
 
   it('stores cars when the repository emits', () => {
@@ -149,5 +172,88 @@ describe('CarsStore', () => {
       sortBy: 'name',
       sortDirection: 'ascending',
     });
+  });
+
+  it('creates a car through the repository', async () => {
+    const store = TestBed.inject(CarsStore);
+
+    await expect(store.createCar(newCar)).resolves.toBe(true);
+
+    expect(createCar).toHaveBeenCalledOnce();
+    expect(createCar).toHaveBeenCalledWith(newCar);
+    expect(store.isCreating()).toBe(false);
+    expect(store.createError()).toBeNull();
+  });
+
+  it('exposes a pending state while a car is being created', async () => {
+    let resolveCreate!: () => void;
+    createCar.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveCreate = resolve;
+        }),
+    );
+    const store = TestBed.inject(CarsStore);
+
+    const creationResult = store.createCar(newCar);
+
+    expect(store.isCreating()).toBe(true);
+
+    resolveCreate();
+
+    await expect(creationResult).resolves.toBe(true);
+    expect(store.isCreating()).toBe(false);
+  });
+
+  it('exposes a friendly duplicate error', async () => {
+    createCar.mockRejectedValue(new DuplicateCarError());
+    const store = TestBed.inject(CarsStore);
+
+    await expect(store.createCar(newCar)).resolves.toBe(false);
+
+    expect(store.createError()).toBe('This car is already in the database.');
+    expect(store.isCreating()).toBe(false);
+  });
+
+  it('exposes a friendly error when car creation fails', async () => {
+    createCar.mockRejectedValue(new Error('Firestore is unavailable'));
+    const store = TestBed.inject(CarsStore);
+
+    await expect(store.createCar(newCar)).resolves.toBe(false);
+
+    expect(store.createError()).toBe(
+      "We couldn't add the car. Please check your connection and try again.",
+    );
+    expect(store.isCreating()).toBe(false);
+  });
+
+  it('clears the car creation error', async () => {
+    createCar.mockRejectedValue(new DuplicateCarError());
+    const store = TestBed.inject(CarsStore);
+    await store.createCar(newCar);
+
+    store.clearCreateError();
+
+    expect(store.createError()).toBeNull();
+  });
+
+  it('prevents concurrent car creation attempts', async () => {
+    let resolveCreate!: () => void;
+    createCar.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveCreate = resolve;
+        }),
+    );
+    const store = TestBed.inject(CarsStore);
+
+    const firstResult = store.createCar(newCar);
+    const secondResult = store.createCar(newCar);
+
+    await expect(secondResult).resolves.toBe(false);
+    expect(createCar).toHaveBeenCalledOnce();
+
+    resolveCreate();
+    await expect(firstResult).resolves.toBe(true);
   });
 });
