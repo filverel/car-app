@@ -2,9 +2,75 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'owner';
+    }
+
+    function isOptionalNumberInRange(value, minimum, maximum) {
+      return value == null
+        || (value is number && value >= minimum && value <= maximum);
+    }
+
+    function isValidCar() {
+      let car = request.resource.data;
+
+      return car.keys().hasAll([
+          'name',
+          'mpg',
+          'cylinders',
+          'displacement',
+          'horsepower',
+          'weight',
+          'acceleration',
+          'modelYear',
+          'origin',
+          'createdAt',
+          'updatedAt'
+        ])
+        && car.keys().hasOnly([
+          'name',
+          'mpg',
+          'cylinders',
+          'displacement',
+          'horsepower',
+          'weight',
+          'acceleration',
+          'modelYear',
+          'origin',
+          'createdAt',
+          'updatedAt'
+        ])
+        && car.name is string
+        && car.name.size() > 0
+        && car.name.size() <= 120
+        && isOptionalNumberInRange(car.mpg, 0, 200)
+        && car.cylinders is int
+        && car.cylinders >= 1
+        && car.cylinders <= 16
+        && isOptionalNumberInRange(car.displacement, 0, 2000)
+        && isOptionalNumberInRange(car.horsepower, 0, 5000)
+        && isOptionalNumberInRange(car.weight, 0, 50000)
+        && isOptionalNumberInRange(car.acceleration, 0, 120)
+        && car.modelYear is int
+        && car.modelYear >= 1886
+        && car.modelYear <= 2100
+        && car.origin in ['usa', 'europe', 'japan', 'other']
+        && car.createdAt == request.time
+        && car.updatedAt == request.time;
+    }
+
     match /cars/{carId} {
       allow read: if true;
-      allow write: if false;
+      allow create: if carId.matches('^car-[a-f0-9]{20}$')
+        && isOwner()
+        && isValidCar();
+      allow update, delete: if false;
+    }
+
+    match /admins/{userId} {
+      allow read, write: if false;
     }
 
     match /{document=**} {

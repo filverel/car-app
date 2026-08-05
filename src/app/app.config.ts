@@ -1,18 +1,29 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore, connectFirestoreEmulator } from '@angular/fire/firestore';
+import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideRouter } from '@angular/router';
 
+import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { firebaseConfig } from './firebase.config';
-
-import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideAuth(() => {
+      const auth = getAuth();
+
+      if (environment.useFirebaseEmulators) {
+        connectAuthEmulator(auth, 'http://127.0.0.1:9099', {
+          disableWarnings: true,
+        });
+      }
+
+      return auth;
+    }),
     provideFirestore(() => {
       const firestore = getFirestore();
 

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "firebase:emulators": "firebase emulators:start --only firestore",
+    "firebase:emulators": "firebase emulators:start --only auth,firestore",
     "import:cars": "tsx tools/import-cars/import-cars.ts",
     "typecheck:importer": "tsc --project tools/import-cars/tsconfig.json"
   },
