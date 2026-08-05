@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
+import { SessionService } from '../../../auth/data-access/session.service';
+import { OwnerSignInDialog } from '../../../auth/ui/owner-sign-in-dialog/owner-sign-in-dialog';
 import { CarCsvDownloadService } from '../../data-access/car-csv-download.service';
 import type { CarOrigin } from '../../models/car.model';
 import type {
@@ -8,16 +10,23 @@ import type {
   SortDirection,
 } from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
+import { CarCreateDialog } from '../../ui/car-create-dialog/car-create-dialog';
 
 @Component({
   selector: 'app-car-list',
+  imports: [OwnerSignInDialog, CarCreateDialog],
   templateUrl: './car-list.html',
   styleUrl: './car-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarList {
   protected readonly store = inject(CarsStore);
+  protected readonly session = inject(SessionService);
   private readonly csvDownload = inject(CarCsvDownloadService);
+
+  protected readonly isSigningOut = signal(false);
+  protected readonly sessionError = signal<string | null>(null);
+  protected readonly creationSuccess = signal<string | null>(null);
 
   protected readonly resultCount = computed(() => {
     const count = this.store.visibleCars().length;
@@ -30,6 +39,28 @@ export class CarList {
 
   protected exportCsv(): void {
     this.csvDownload.download(this.store.cars());
+  }
+
+  protected async signOut(): Promise<void> {
+    if (this.isSigningOut()) {
+      return;
+    }
+
+    this.isSigningOut.set(true);
+    this.sessionError.set(null);
+    this.creationSuccess.set(null);
+
+    try {
+      await this.session.signOut();
+    } catch {
+      this.sessionError.set("We couldn't sign you out. Please try again.");
+    } finally {
+      this.isSigningOut.set(false);
+    }
+  }
+
+  protected onCarCreated(name: string): void {
+    this.creationSuccess.set(`${name} was added to the database.`);
   }
 
   protected onOriginChange(origin: string): void {

@@ -1,0 +1,133 @@
+<dialog
+  #dialog
+  class="dialog"
+  aria-labelledby="create-car-title"
+  (cancel)="preventPendingCancellation($event)"
+  (close)="onClosed()"
+>
+  <form class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <header class="dialog-header">
+      <p class="eyebrow">New database entry</p>
+      <h2 id="create-car-title">Add a car</h2>
+      <p>Required fields are marked with an asterisk. Leave unknown optional measurements blank.</p>
+    </header>
+
+    <div class="form-grid">
+      <div class="form-field form-field--wide">
+        <label for="new-car-name">Name <span aria-hidden="true">*</span></label>
+        <input
+          id="new-car-name"
+          type="text"
+          formControlName="name"
+          autocomplete="off"
+          [attr.aria-invalid]="showError(form.controls.name)"
+          [attr.aria-describedby]="showError(form.controls.name) ? 'new-car-name-error' : null"
+        />
+        @if (showError(form.controls.name)) {
+          <p id="new-car-name-error" class="field-error">
+            {{ form.controls.name.hasError('maxlength') ? 'Use no more than 120 characters.' : 'Enter the car name.' }}
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-year">Model year <span aria-hidden="true">*</span></label>
+        <input id="new-car-year" type="number" step="1" formControlName="modelYear"
+          [attr.aria-invalid]="showError(form.controls.modelYear)"
+          [attr.aria-describedby]="showError(form.controls.modelYear) ? 'new-car-year-error' : null" />
+        @if (showError(form.controls.modelYear)) {
+          <p id="new-car-year-error" class="field-error">Enter a whole year from 1886 to 2100.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-origin">Origin <span aria-hidden="true">*</span></label>
+        <select id="new-car-origin" formControlName="origin"
+          [attr.aria-invalid]="showError(form.controls.origin)"
+          [attr.aria-describedby]="showError(form.controls.origin) ? 'new-car-origin-error' : null">
+          <option value="">Select an origin</option>
+          <option value="usa">USA</option>
+          <option value="europe">Europe</option>
+          <option value="japan">Japan</option>
+          <option value="other">Other</option>
+        </select>
+        @if (showError(form.controls.origin)) {
+          <p id="new-car-origin-error" class="field-error">Select an origin.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-cylinders">Cylinders <span aria-hidden="true">*</span></label>
+        <input id="new-car-cylinders" type="number" step="1" formControlName="cylinders"
+          [attr.aria-invalid]="showError(form.controls.cylinders)"
+          [attr.aria-describedby]="showError(form.controls.cylinders) ? 'new-car-cylinders-error' : null" />
+        @if (showError(form.controls.cylinders)) {
+          <p id="new-car-cylinders-error" class="field-error">Enter a whole number from 1 to 16.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-mpg">MPG</label>
+        <input id="new-car-mpg" type="number" step="any" formControlName="mpg"
+          [attr.aria-invalid]="showError(form.controls.mpg)"
+          [attr.aria-describedby]="showError(form.controls.mpg) ? 'new-car-mpg-error' : null" />
+        @if (showError(form.controls.mpg)) {
+          <p id="new-car-mpg-error" class="field-error">Enter a value from 0 to 200.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-displacement">Displacement (cu in)</label>
+        <input id="new-car-displacement" type="number" step="any" formControlName="displacement"
+          [attr.aria-invalid]="showError(form.controls.displacement)"
+          [attr.aria-describedby]="showError(form.controls.displacement) ? 'new-car-displacement-error' : null" />
+        @if (showError(form.controls.displacement)) {
+          <p id="new-car-displacement-error" class="field-error">Enter a value from 0 to 2000.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-horsepower">Horsepower</label>
+        <input id="new-car-horsepower" type="number" step="any" formControlName="horsepower"
+          [attr.aria-invalid]="showError(form.controls.horsepower)"
+          [attr.aria-describedby]="showError(form.controls.horsepower) ? 'new-car-horsepower-error' : null" />
+        @if (showError(form.controls.horsepower)) {
+          <p id="new-car-horsepower-error" class="field-error">Enter a value from 0 to 5000.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-weight">Weight (lb)</label>
+        <input id="new-car-weight" type="number" step="any" formControlName="weight"
+          [attr.aria-invalid]="showError(form.controls.weight)"
+          [attr.aria-describedby]="showError(form.controls.weight) ? 'new-car-weight-error' : null" />
+        @if (showError(form.controls.weight)) {
+          <p id="new-car-weight-error" class="field-error">Enter a value from 0 to 50000.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="new-car-acceleration">Acceleration (seconds)</label>
+        <input id="new-car-acceleration" type="number" step="any" formControlName="acceleration"
+          [attr.aria-invalid]="showError(form.controls.acceleration)"
+          [attr.aria-describedby]="showError(form.controls.acceleration) ? 'new-car-acceleration-error' : null" />
+        @if (showError(form.controls.acceleration)) {
+          <p id="new-car-acceleration-error" class="field-error">Enter a value from 0 to 120.</p>
+        }
+      </div>
+    </div>
+
+    @if (store.createError(); as error) {
+      <p class="submission-error" role="alert">{{ error }}</p>
+    }
+
+    <footer class="dialog-actions">
+      <button type="button" class="secondary-button" [disabled]="store.isCreating()" (click)="close()">
+        Cancel
+      </button>
+      <button type="submit" class="primary-button" [disabled]="store.isCreating()">
+        {{ store.isCreating() ? 'Adding car…' : 'Add car' }}
+      </button>
+    </footer>
+  </form>
+</dialog>

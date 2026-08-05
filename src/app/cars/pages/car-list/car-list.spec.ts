@@ -2,7 +2,9 @@ import { signal } from '@angular/core';
 import type { WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
+import { SessionService } from '../../../auth/data-access/session.service';
 import { CarCsvDownloadService } from '../../data-access/car-csv-download.service';
 import type { Car } from '../../models/car.model';
 import type {
@@ -12,6 +14,7 @@ import type {
   SortDirection,
 } from '../../models/car-query.model';
 import { CarsStore } from '../../state/cars.store';
+import { CarCreateDialog } from '../../ui/car-create-dialog/car-create-dialog';
 import { CarList } from './car-list';
 
 describe('CarList', () => {
@@ -20,7 +23,13 @@ describe('CarList', () => {
   let visibleCars: WritableSignal<readonly Car[]>;
   let isLoading: WritableSignal<boolean>;
   let loadError: WritableSignal<string | null>;
+  let isCreating: WritableSignal<boolean>;
+  let createError: WritableSignal<string | null>;
   let query: WritableSignal<CarQuery>;
+  let currentUser: WritableSignal<{ readonly email: string } | null | undefined>;
+  let isInitializing: WritableSignal<boolean>;
+  let isSignedIn: WritableSignal<boolean>;
+  let signOut: ReturnType<typeof vi.fn>;
   let receivedSearchTerm: string | null;
   let receivedOrigin: CarOriginFilter | null;
   let downloadedCars: readonly Car[] | null;
@@ -49,6 +58,12 @@ describe('CarList', () => {
     visibleCars = signal<readonly Car[]>([]);
     isLoading = signal(true);
     loadError = signal<string | null>(null);
+    isCreating = signal(false);
+    createError = signal<string | null>(null);
+    currentUser = signal(null);
+    isInitializing = signal(false);
+    isSignedIn = signal(false);
+    signOut = vi.fn().mockResolvedValue(undefined);
 
     query = signal<CarQuery>({
       searchTerm: '',
@@ -72,7 +87,11 @@ describe('CarList', () => {
             visibleCars,
             isLoading,
             loadError,
+            isCreating,
+            createError,
             query,
+            createCar: vi.fn().mockResolvedValue(true),
+            clearCreateError: vi.fn(),
             setSearchTerm: (searchTerm: string) => {
               receivedSearchTerm = searchTerm;
             },
@@ -90,6 +109,16 @@ describe('CarList', () => {
                 sortDirection,
               }));
             },
+          },
+        },
+        {
+          provide: SessionService,
+          useValue: {
+            user: currentUser,
+            isInitializing,
+            isSignedIn,
+            signIn: vi.fn().mockResolvedValue(undefined),
+            signOut,
           },
         },
         {
@@ -285,5 +314,57 @@ describe('CarList', () => {
       sortDirection: 'ascending',
     });
     expect(button.closest('th')?.getAttribute('aria-sort')).toBe('ascending');
+  });
+
+  it('shows the owner sign-in control when signed out', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-testid="owner-sign-in"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="add-car"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Sign in to add cars to the database.');
+  });
+
+  it('does not show signed-out controls while the session initializes', () => {
+    isInitializing.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Checking owner session');
+    expect(fixture.nativeElement.querySelector('[data-testid="owner-sign-in"]')).toBeNull();
+  });
+
+  it('shows owner actions when signed in', () => {
+    currentUser.set({ email: 'john@example.com' });
+    isSignedIn.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('john@example.com');
+    expect(fixture.nativeElement.querySelector('[data-testid="add-car"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="sign-out"]')).not.toBeNull();
+  });
+
+  it('signs the owner out', () => {
+    currentUser.set({ email: 'john@example.com' });
+    isSignedIn.set(true);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '[data-testid="sign-out"]',
+    ) as HTMLButtonElement;
+    button.click();
+
+    expect(signOut).toHaveBeenCalledOnce();
+  });
+
+  it('announces successful car creation', () => {
+    currentUser.set({ email: 'john@example.com' });
+    isSignedIn.set(true);
+    fixture.detectChanges();
+
+    const createDialog = fixture.debugElement.query(By.directive(CarCreateDialog))
+      .componentInstance as CarCreateDialog;
+    createDialog.created.emit('volvo 244 dl');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('volvo 244 dl was added to the database.');
   });
 });

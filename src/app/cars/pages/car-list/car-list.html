@@ -1,10 +1,75 @@
 <section class="car-list" aria-labelledby="car-list-heading">
+  <app-owner-sign-in-dialog #signInDialog />
+
   <header class="page-header">
-    <p class="eyebrow">Your collection</p>
-    <h2 id="car-list-heading">Cars</h2>
-    <p class="page-description">
-      Browse and compare the cars saved in your database.
-    </p>
+    <div class="page-header__layout">
+      <div>
+        <p class="eyebrow">Your collection</p>
+        <h2 id="car-list-heading">Cars</h2>
+        <p class="page-description">
+          Browse and compare the cars saved in your database.
+        </p>
+      </div>
+
+      <div
+        class="owner-panel"
+        [class.owner-panel--authenticated]="session.isSignedIn()"
+        aria-label="Collection owner controls"
+      >
+        @if (session.isInitializing()) {
+          <p class="session-status" role="status">Checking owner session…</p>
+        } @else if (session.isSignedIn()) {
+          <app-car-create-dialog #carCreateDialog (created)="onCarCreated($event)" />
+
+          <p class="session-status">
+            Signed in as <strong>{{ session.user()?.email ?? 'owner' }}</strong>
+          </p>
+          <div class="owner-actions">
+            <button
+              #addCarButton
+              type="button"
+              class="action-button action-button--primary"
+              data-testid="add-car"
+              (click)="carCreateDialog.open(addCarButton)"
+            >
+              Add car
+            </button>
+            <button
+              type="button"
+              class="action-button action-button--secondary"
+              data-testid="sign-out"
+              [disabled]="isSigningOut()"
+              (click)="signOut()"
+            >
+              {{ isSigningOut() ? 'Signing out…' : 'Sign out' }}
+            </button>
+          </div>
+        } @else {
+          <div class="sign-in-prompt">
+            <p class="session-status">Sign in to add cars to the database.</p>
+            <button
+              #signInButton
+              type="button"
+              class="action-button action-button--primary"
+              data-testid="owner-sign-in"
+              (click)="signInDialog.open(signInButton)"
+            >
+              Owner sign in
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (sessionError(); as error) {
+      <p class="status-banner status-banner--error" role="alert">{{ error }}</p>
+    }
+
+    @if (creationSuccess(); as message) {
+      <p class="status-banner status-banner--success" role="status" aria-live="polite">
+        {{ message }}
+      </p>
+    }
   </header>
 
   @if (store.isLoading()) {

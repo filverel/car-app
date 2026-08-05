@@ -32,6 +32,6 @@ export async function createCarDocumentId(car: CarData): Promise<string> {
   return `${documentIdPrefix}${hash.slice(0, documentIdHashLength)}`;
 }
 
-function normalizeCarName(name: string): string {
+export function normalizeCarName(name: string): string {
   return name.trim().replace(/\s+/g, ' ').toLowerCase();
 }

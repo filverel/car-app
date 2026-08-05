@@ -1,0 +1,58 @@
+<dialog
+  #dialog
+  class="dialog"
+  aria-labelledby="owner-sign-in-title"
+  (cancel)="preventPendingCancellation($event)"
+  (close)="onClosed()"
+>
+  <form class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <header class="dialog-header">
+      <p class="eyebrow">Collection owner</p>
+      <h2 id="owner-sign-in-title">Sign in</h2>
+      <p>Sign in with the account created for this automobile database.</p>
+    </header>
+
+    <div class="form-field">
+      <label for="owner-email">Email</label>
+      <input
+        id="owner-email"
+        type="email"
+        formControlName="email"
+        autocomplete="username"
+        [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+        [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'owner-email-error' : null"
+      />
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <p id="owner-email-error" class="field-error">Enter a valid email address.</p>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="owner-password">Password</label>
+      <input
+        id="owner-password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+        [attr.aria-describedby]="form.controls.password.invalid && form.controls.password.touched ? 'owner-password-error' : null"
+      />
+      @if (form.controls.password.invalid && form.controls.password.touched) {
+        <p id="owner-password-error" class="field-error">Enter your password.</p>
+      }
+    </div>
+
+    @if (submissionError(); as error) {
+      <p class="submission-error" role="alert">{{ error }}</p>
+    }
+
+    <footer class="dialog-actions">
+      <button type="button" class="secondary-button" [disabled]="isSubmitting()" (click)="close()">
+        Cancel
+      </button>
+      <button type="submit" class="primary-button" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </footer>
+  </form>
+</dialog>

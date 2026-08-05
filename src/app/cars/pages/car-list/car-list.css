@@ -12,6 +12,13 @@
   margin-bottom: 2rem;
 }
 
+.page-header__layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
 .eyebrow {
   margin: 0 0 0.5rem;
   color: var(--color-brand);
@@ -47,6 +54,90 @@ thead th {
   color: #475467;
   font-size: 1.0625rem;
   line-height: 1.6;
+}
+
+.owner-panel {
+  display: grid;
+  justify-items: end;
+  gap: 0.625rem;
+}
+
+.owner-panel--authenticated {
+  min-width: min(100%, 18rem);
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+
+.sign-in-prompt {
+  display: grid;
+  justify-items: end;
+  gap: 0.625rem;
+}
+
+.session-status {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+.owner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}
+
+.action-button {
+  min-height: 2.625rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action-button--primary {
+  border: 1px solid var(--color-brand);
+  color: #ffffff;
+  background: var(--color-brand);
+}
+
+.action-button--secondary {
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.action-button:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.status-banner {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.status-banner--success {
+  border: 1px solid #99e6d8;
+  color: var(--color-brand-strong);
+  background: var(--color-brand-soft);
+}
+
+.status-banner--error {
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger);
+  background: var(--color-danger-background);
 }
 
 .filter-panel {
@@ -241,6 +332,31 @@ tbody tr:hover {
 }
 
 @media (max-width: 60rem) {
+  .page-header__layout {
+    flex-direction: column;
+  }
+
+  .owner-panel {
+    width: 100%;
+    justify-items: start;
+  }
+
+  .owner-panel--authenticated {
+    width: 100%;
+  }
+
+  .sign-in-prompt {
+    justify-items: start;
+  }
+
+  .session-status {
+    text-align: left;
+  }
+
+  .owner-actions {
+    justify-content: flex-start;
+  }
+
   .filter-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
