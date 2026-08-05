@@ -23,6 +23,19 @@ describe('createCarDocumentId', () => {
     expect(firstId).toBe(secondId);
   });
 
+  it('matches the ID of an existing imported document', () => {
+    expect(createCarDocumentId(car)).toBe('car-501523512cba2441db9d');
+  });
+
+  it('ignores capitalization and insignificant whitespace in the name', () => {
+    expect(
+      createCarDocumentId({
+        ...car,
+        name: '  Chevrolet   Chevelle Malibu ',
+      }),
+    ).toBe(createCarDocumentId(car));
+  });
+
   it('returns a different ID when the car data changes', () => {
     const firstId = createCarDocumentId(car);
     const secondId = createCarDocumentId({
